@@ -1,11 +1,9 @@
 import './index.scss';
+import {Choice, Coordinate, NumberCoordinates} from './types';
 
 type HTMLElementEvent<T extends HTMLElement> = Event & {
   target: T;
 };
-type Coordinate = `${number},${number}`;
-type NumberCoordinates = {x: number; y: number};
-type Choice = 'x' | 'o';
 
 function coordsToNumberCoords(coords: Coordinate): NumberCoordinates {
   const [startX, startY] = coords.split(',');
