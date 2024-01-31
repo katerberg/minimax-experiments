@@ -1,3 +1,4 @@
+import {isWin} from './game';
 import './index.scss';
 import {Choice, Coordinate, NumberCoordinates} from './types';
 
@@ -139,13 +140,24 @@ function rowChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
   redraw();
 }
 
+function checkWin(): void {
+  if (isWin(state.selections, state.columns, state.rows)) {
+    alert('Win!');
+  } else {
+    alert('No win');
+  }
+}
+
 function bindListeners(): void {
   const columnSelector = document.getElementById('column-selector');
   const rowSelector = document.getElementById('row-selector');
+  const calculateSelector = document.getElementById('calculate-button');
 
-  if (rowSelector && columnSelector) {
+  if (rowSelector && columnSelector && calculateSelector) {
     columnSelector.addEventListener('change', columnChangeListener as (ev: Event) => void);
     rowSelector.addEventListener('change', rowChangeListener as (ev: Event) => void);
+
+    calculateSelector.addEventListener('click', checkWin);
   }
 }
 
