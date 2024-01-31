@@ -12,8 +12,8 @@ function coordsToNumberCoords(coords: Coordinate): NumberCoordinates {
   return {x: Number.parseInt(startX, 10), y: Number.parseInt(startY, 10)};
 }
 
-const gameWidth = 800;
-const gameHeight = 375;
+const gameWidth = 1600;
+const gameHeight = 750;
 const gameRatio = gameWidth / gameHeight;
 function resize(): void {
   const gameNode = document.getElementById('game');
@@ -57,7 +57,7 @@ function drawX(x: number, y: number): void {
     const yStart = y * cellHeight + 15;
     ctx.clearRect(xStart - 10, yStart - 10, cellWidth - 30, cellHeight - 30);
     ctx.lineWidth = 5;
-    ctx.fillStyle = 'rgb(0 0 200)';
+    ctx.strokeStyle = 'rgb(0 0 200)';
     ctx.beginPath();
 
     ctx.moveTo(xStart, yStart);
@@ -69,37 +69,62 @@ function drawX(x: number, y: number): void {
   }
 }
 
+function drawO(x: number, y: number): void {
+  const ctx = getCanvas().getContext('2d');
+  const cellWidth = gameWidth / state.columns;
+  const cellHeight = gameHeight / state.rows;
+  if (ctx) {
+    const xStart = x * cellWidth + 5;
+    const yStart = y * cellHeight + 5;
+    ctx.clearRect(xStart, yStart, cellWidth - 30, cellHeight - 30);
+    const radius = Math.min(cellWidth, cellHeight) * 0.4 - 10;
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'rgb(200 0 0)';
+    ctx.beginPath();
+    ctx.arc(xStart + cellWidth / 2, yStart + cellHeight / 2, radius, 0, 2 * Math.PI, false);
+    ctx.stroke();
+  }
+}
+
+function redrawBoard(ctx: CanvasRenderingContext2D): void {
+  const cellWidth = gameWidth / state.columns;
+  const cellHeight = gameHeight / state.rows;
+
+  ctx.fillStyle = 'rgb(0 0 0)';
+  for (let col = 1; col < state.columns; col++) {
+    ctx.fillRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
+  }
+  for (let row = 1; row < state.rows; row++) {
+    ctx.fillRect(10, cellHeight * row - 5, gameWidth - 20, 10);
+  }
+}
+
+function redrawSelections(): void {
+  (Object.keys(state.selections) as Coordinate[]).forEach((key) => {
+    const {x, y} = coordsToNumberCoords(key);
+    if (state.selections[key] === 'x') {
+      drawX(x, y);
+    } else {
+      drawO(x, y);
+    }
+  });
+}
+
 function redraw(): void {
   const ctx = getCanvas().getContext('2d');
   if (ctx) {
     ctx.clearRect(0, 0, gameWidth, gameHeight);
-    const cellWidth = gameWidth / state.columns;
-    const cellHeight = gameHeight / state.rows;
 
-    ctx.fillStyle = 'rgb(200 0 0)';
-    for (let col = 1; col < state.columns; col++) {
-      ctx.fillRect(cellWidth * col - 5 * col, 10, 10, gameHeight - 20);
-    }
-    for (let row = 1; row < state.rows; row++) {
-      ctx.fillRect(10, cellHeight * row - 5 * row, gameWidth - 20, 10);
-    }
-
-    for (const [key, choice] of Object.entries(state.selections)) {
-      const {x, y} = coordsToNumberCoords(key as Coordinate);
-      if (choice === 'x') {
-        drawX(x, y);
-      } else {
-        ctx.fillStyle = 'rgb(200 0 0)';
-        ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
-      }
-    }
+    redrawBoard(ctx);
+    setTimeout(() => redrawSelections(), 1);
   }
 }
 
 function updateSelections(columns: number, rows: number): void {
   (Object.keys(state.selections) as Coordinate[]).forEach((key) => {
     const {x, y} = coordsToNumberCoords(key);
-    if (x < columns || y < rows) {
+    if (x >= columns || y >= rows) {
       delete state.selections[key];
     }
   });
@@ -112,6 +137,7 @@ function columnChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
 
 function rowChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
   state.rows = Number(ev.target.value);
+  updateSelections(state.columns, state.rows);
   redraw();
 }
 
