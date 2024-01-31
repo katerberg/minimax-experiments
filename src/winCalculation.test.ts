@@ -1,6 +1,6 @@
-import {isWin} from './game';
+import {isWin} from './winCalculation';
 
-describe('game', () => {
+describe('winCalculation', () => {
   describe('isWin', () => {
     it('should return false when there are not enough selections', () => {
       expect(isWin({}, 3, 3)).toBe(false);

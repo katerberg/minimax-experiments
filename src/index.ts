@@ -1,4 +1,4 @@
-import {isWin} from './game';
+import {isWin} from './winCalculation';
 import './index.scss';
 import {Choice, Coordinate, NumberCoordinates} from './types';
 
