@@ -141,10 +141,14 @@ function rowChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
 }
 
 function checkWin(): void {
-  if (isWin(state.selections, state.columns, state.rows)) {
-    alert('Win!');
-  } else {
-    alert('No win');
+  const result = document.getElementById('result-area');
+  const time = new Date().getTime();
+  if (result) {
+    if (isWin(state.selections, state.columns, state.rows)) {
+      result.textContent = `Win! Calculated: ${new Date().getTime() - time} ms`;
+    } else {
+      result.textContent = `No. Calculated: ${new Date().getTime() - time} ms`;
+    }
   }
 }
 
