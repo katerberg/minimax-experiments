@@ -1,5 +1,5 @@
-import {Choice, Coordinate, NumberCoordinates, State, WinResult} from './types';
-import {getTotalScore, isWin} from './winCalculation';
+import {Choice, Coordinate, NumberCoordinates, State} from './types';
+import {getTotalScore} from './winCalculation';
 import './index.scss';
 
 type HTMLElementEvent<T extends HTMLElement> = Event & {
