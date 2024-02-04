@@ -1,6 +1,6 @@
-import {isWin} from './winCalculation';
+import {Choice, Coordinate, NumberCoordinates, State, WinResult} from './types';
+import {getTotalScore, isWin} from './winCalculation';
 import './index.scss';
-import {Choice, Coordinate, NumberCoordinates} from './types';
 
 type HTMLElementEvent<T extends HTMLElement> = Event & {
   target: T;
@@ -29,10 +29,11 @@ function resize(): void {
 }
 
 const state = {
+  currentPlayer: 'x' as Choice,
   columns: 3,
   rows: 3,
   selections: {} as {[key: Coordinate]: Choice},
-};
+} as State;
 
 function initCanvasSize(canvas: HTMLCanvasElement): void {
   const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -140,14 +141,21 @@ function rowChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
   redraw();
 }
 
-function checkWin(): void {
+function getCurrentScore(): number {
+  return getTotalScore(state.selections, state.columns, state.rows);
+}
+
+function calculate(): void {
   const result = document.getElementById('result-area');
   const time = new Date().getTime();
   if (result) {
-    if (isWin(state.selections, state.columns, state.rows)) {
-      result.textContent = `Win! Calculated: ${new Date().getTime() - time} ms`;
+    const score = getCurrentScore();
+    if (score > 0) {
+      result.textContent = `Winning ${score}! Calculated: ${new Date().getTime() - time} ms`;
+    } else if (score < 0) {
+      result.textContent = `Losing ${score}. Calculated: ${new Date().getTime() - time} ms`;
     } else {
-      result.textContent = `No. Calculated: ${new Date().getTime() - time} ms`;
+      result.textContent = `Tie ${score}. Calculated: ${new Date().getTime() - time} ms`;
     }
   }
 }
@@ -161,7 +169,7 @@ function bindListeners(): void {
     columnSelector.addEventListener('change', columnChangeListener as (ev: Event) => void);
     rowSelector.addEventListener('change', rowChangeListener as (ev: Event) => void);
 
-    calculateSelector.addEventListener('click', checkWin);
+    calculateSelector.addEventListener('click', calculate);
   }
 }
 
