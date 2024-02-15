@@ -8,6 +8,7 @@ import {
   getTotalDiagonalScore,
   getTotalReverseDiagonalScore,
   getTotalScore,
+  isCat,
 } from './winCalculation';
 
 describe('winCalculation', () => {
@@ -30,6 +31,16 @@ describe('winCalculation', () => {
 
     it('should return true when there are 3 in a row reverse-diagonally', () => {
       expect(isWin({'2,1': 'x', '1,2': 'x', '0,3': 'x'}, 5, 5)).toBe(true);
+    });
+  });
+
+  describe('isCat', () => {
+    it('should return false when there are not enough selections', () => {
+      expect(isCat({'0,0': 'x', '0,1': 'x', '1,0': 'x'}, 2, 2)).toBe(false);
+    });
+
+    it('should return true when all spaces are filled', () => {
+      expect(isCat({'0,0': 'x', '0,1': 'o', '1,0': 'x', '2,2': 'o'}, 2, 2)).toBe(true);
     });
   });
 

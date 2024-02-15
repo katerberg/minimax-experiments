@@ -1,6 +1,6 @@
-import {Choice, Coordinate, NumberCoordinates} from './types';
+import {Choice, Moves, NumberCoordinates, State} from './types';
 
-function isColumnWin(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): boolean {
+function isColumnWin(selections: Moves, columns: number, rows: number): boolean {
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
       if (
@@ -16,7 +16,7 @@ function isColumnWin(selections: {[key: Coordinate]: Choice}, columns: number, r
   return false;
 }
 
-function isRowWin(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): boolean {
+function isRowWin(selections: Moves, columns: number, rows: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows; y++) {
       if (
@@ -32,7 +32,7 @@ function isRowWin(selections: {[key: Coordinate]: Choice}, columns: number, rows
   return false;
 }
 
-function isDiagonalWin(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): boolean {
+function isDiagonalWin(selections: Moves, columns: number, rows: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows - 2; y++) {
       if (
@@ -50,7 +50,7 @@ function isDiagonalWin(selections: {[key: Coordinate]: Choice}, columns: number,
   return false;
 }
 
-function isReverseDiagonalWin(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): boolean {
+function isReverseDiagonalWin(selections: Moves, columns: number, rows: number): boolean {
   for (let x = 2; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
       if (
@@ -68,7 +68,7 @@ function isReverseDiagonalWin(selections: {[key: Coordinate]: Choice}, columns: 
   return false;
 }
 
-export function isWin(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): boolean {
+export function isWin(selections: Moves, columns: number, rows: number): boolean {
   return (
     isColumnWin(selections, columns, rows) ||
     isRowWin(selections, columns, rows) ||
@@ -77,7 +77,27 @@ export function isWin(selections: {[key: Coordinate]: Choice}, columns: number, 
   );
 }
 
-export function getColumnScore(selections: {[key: Coordinate]: Choice}, column: number, rows: number): number {
+export function isCat(selections: Moves, columns: number, rows: number): boolean {
+  return Object.keys(selections).length === columns * rows;
+}
+
+export function checkTerminal(state: State): {
+  isTerminal: boolean;
+  isCat: boolean;
+  isWinner: boolean;
+  winner: Choice | null;
+} {
+  const isWinner = isWin(state.selections, state.columns, state.rows);
+  const isCatGame = isCat(state.selections, state.columns, state.rows);
+  return {
+    isTerminal: isWinner || isCatGame,
+    isWinner,
+    isCat: isCatGame,
+    winner: isWinner ? state.currentPlayer : null,
+  };
+}
+
+export function getColumnScore(selections: Moves, column: number, rows: number): number {
   let score = 0;
   for (let y = 0; y < rows; y++) {
     if (selections[`${column},${y}`] === 'x') {
@@ -109,7 +129,7 @@ export function getColumnScore(selections: {[key: Coordinate]: Choice}, column: 
   return score;
 }
 
-export function getRowScore(selections: {[key: Coordinate]: Choice}, columns: number, row: number): number {
+export function getRowScore(selections: Moves, columns: number, row: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
     if (selections[`${x},${row}`] === 'x') {
@@ -141,7 +161,7 @@ export function getRowScore(selections: {[key: Coordinate]: Choice}, columns: nu
   return score;
 }
 
-export function getTotalColumnScore(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): number {
+export function getTotalColumnScore(selections: Moves, columns: number, rows: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
     score += getColumnScore(selections, x, rows);
@@ -150,7 +170,7 @@ export function getTotalColumnScore(selections: {[key: Coordinate]: Choice}, col
   return score;
 }
 
-export function getTotalRowScore(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): number {
+export function getTotalRowScore(selections: Moves, columns: number, rows: number): number {
   let score = 0;
   for (let y = 0; y < rows; y++) {
     score += getRowScore(selections, columns, y);
@@ -160,7 +180,7 @@ export function getTotalRowScore(selections: {[key: Coordinate]: Choice}, column
 }
 
 export function getDiagonalScore(
-  selections: {[key: Coordinate]: Choice},
+  selections: Moves,
   columns: number,
   rows: number,
   startingCoordinate: NumberCoordinates,
@@ -208,7 +228,7 @@ export function getDiagonalScore(
   return score;
 }
 
-export function getTotalDiagonalScore(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): number {
+export function getTotalDiagonalScore(selections: Moves, columns: number, rows: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
     score += getDiagonalScore(selections, columns, rows, {x, y: 0});
@@ -221,7 +241,7 @@ export function getTotalDiagonalScore(selections: {[key: Coordinate]: Choice}, c
 }
 
 function getReverseDiagonalScore(
-  selections: {[key: Coordinate]: Choice},
+  selections: Moves,
   columns: number,
   rows: number,
   startingCoordinate: NumberCoordinates,
@@ -269,11 +289,7 @@ function getReverseDiagonalScore(
   return score;
 }
 
-export function getTotalReverseDiagonalScore(
-  selections: {[key: Coordinate]: Choice},
-  columns: number,
-  rows: number,
-): number {
+export function getTotalReverseDiagonalScore(selections: Moves, columns: number, rows: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
     score += getReverseDiagonalScore(selections, columns, rows, {x, y: 0});
@@ -285,7 +301,7 @@ export function getTotalReverseDiagonalScore(
   return score;
 }
 
-export function getTotalScore(selections: {[key: Coordinate]: Choice}, columns: number, rows: number): number {
+export function getTotalScore(selections: Moves, columns: number, rows: number): number {
   return (
     getTotalColumnScore(selections, columns, rows) +
     getTotalRowScore(selections, columns, rows) +

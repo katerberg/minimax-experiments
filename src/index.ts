@@ -1,15 +1,12 @@
+import './index.scss';
+import {coordsToNumberCoords} from './coordinatesHelper';
+import {getBestMove} from './minimax';
 import {Choice, Coordinate, NumberCoordinates, State} from './types';
 import {getTotalScore} from './winCalculation';
-import './index.scss';
 
 type HTMLElementEvent<T extends HTMLElement> = Event & {
   target: T;
 };
-
-function coordsToNumberCoords(coords: Coordinate): NumberCoordinates {
-  const [startX, startY] = coords.split(',');
-  return {x: Number.parseInt(startX, 10), y: Number.parseInt(startY, 10)};
-}
 
 const gameWidth = 1600;
 const gameHeight = 750;
@@ -150,6 +147,9 @@ function calculate(): void {
   const time = new Date().getTime();
   if (result) {
     const score = getCurrentScore();
+    const bestMove = getBestMove(state);
+    console.log(bestMove);
+
     if (score > 0) {
       result.textContent = `Winning ${score}! Calculated: ${new Date().getTime() - time} ms`;
     } else if (score < 0) {
