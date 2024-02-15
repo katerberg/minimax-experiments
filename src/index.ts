@@ -148,14 +148,14 @@ function calculate(): void {
   if (result) {
     const score = getCurrentScore();
     const bestMove = getBestMove(state);
-    console.log(bestMove);
-
+    const terminal = `Terminal ${bestMove.bestScore} at ${bestMove.bestMove.x},${bestMove.bestMove.y}.`;
+    const calculated = `Calculated: ${new Date().getTime() - time} ms`;
     if (score > 0) {
-      result.textContent = `Winning ${score}! Calculated: ${new Date().getTime() - time} ms`;
+      result.textContent = `Winning ${score}. ${terminal} ${calculated}`;
     } else if (score < 0) {
-      result.textContent = `Losing ${score}. Calculated: ${new Date().getTime() - time} ms`;
+      result.textContent = `Losing ${score}. ${terminal} ${calculated}`;
     } else {
-      result.textContent = `Tie ${score}. Calculated: ${new Date().getTime() - time} ms`;
+      result.textContent = `Tie ${score}. ${terminal} ${calculated}`;
     }
   }
 }
