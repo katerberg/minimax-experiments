@@ -9,8 +9,7 @@ export function getBestMove(
   depth = 0,
 ): {bestScore: number; bestMove: NumberCoordinates} {
   const maximizing = isMaximizing ? isMaximizing : state.currentPlayer === 'x';
-  if (depth > 12) {
-    console.log('too deep');
+  if (depth > state.maxDepth) {
     return {bestScore: 0, bestMove: {x: 0, y: 0}};
   }
   if (maximizing) {
@@ -20,7 +19,6 @@ export function getBestMove(
     let [bestMove] = availableMoves;
     let bestScore = -1_000_000;
     for (let i = 0; i < availableMoves.length; i++) {
-      console.log('current best', bestScore, 'depth', depth);
       const move = availableMoves[i];
 
       //Initialize a new board with a copy of our current state
@@ -34,27 +32,22 @@ export function getBestMove(
       const terminalState = checkTerminal(child);
       if (terminalState.isTerminal) {
         if (terminalState.isWinner) {
-          console.log('found terminal state for x', move.x, move.y, 'depth', depth);
           bestScore = 1_000_000 - depth;
           bestMove = move;
           break;
         }
         if (terminalState.isCat && 0 > bestScore) {
-          console.log('cat is best maximizing score', 'depth', depth);
           bestScore = 0;
           bestMove = move;
         }
       } else {
-        console.log('checking best move after playing x in move', move.x, move.y);
         const nodeValue = getBestMove(child, false, depth + 1);
         if (nodeValue.bestScore > bestScore) {
-          console.log('new best maximizing score', nodeValue.bestScore, 'depth', depth);
           ({bestScore} = nodeValue);
           bestMove = move;
         }
       }
     }
-    console.log('returning best maxing', bestScore, 'best move', bestMove, 'depth', depth);
     return {bestScore, bestMove};
   }
   //Loop through all empty cells
@@ -63,7 +56,6 @@ export function getBestMove(
   let [bestMove] = availableMoves;
   let bestScore = 1_000_000;
   for (let i = 0; i < availableMoves.length; i++) {
-    console.log('current minimizing best', bestScore, 'depth', depth);
     const move = availableMoves[i];
 
     //Initialize a new board with a copy of our current state
@@ -77,26 +69,21 @@ export function getBestMove(
     const terminalState = checkTerminal(child);
     if (terminalState.isTerminal) {
       if (terminalState.isWinner) {
-        console.log('found terminal state for o', move.x, move.y, 'depth', depth);
         bestScore = -1_000_000 + depth;
         bestMove = move;
         break;
       }
       if (terminalState.isCat && 0 < bestScore) {
-        console.log('cat is best minimizing score', 'depth', depth);
         bestScore = 0;
         bestMove = move;
       }
     } else {
-      console.log('checking best move after playing o in move', move.x, move.y);
       const nodeValue = getBestMove(child, true, depth + 1);
       if (nodeValue.bestScore < bestScore) {
-        console.log('new best minimizing score', nodeValue.bestScore, 'depth', depth);
         ({bestScore} = nodeValue);
         bestMove = move;
       }
     }
   }
-  console.log('returning best minning', bestScore, 'best move', bestMove, 'depth', depth);
   return {bestScore, bestMove};
 }

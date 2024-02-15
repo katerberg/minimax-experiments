@@ -6,6 +6,7 @@ export type Moves = {[key: Coordinate]: Choice | undefined};
 export type State = {
   columns: number;
   rows: number;
+  maxDepth: number;
   selections: Moves;
   currentPlayer: Choice;
 };

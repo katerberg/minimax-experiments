@@ -9,6 +9,5 @@ export function getAvailableMoves(state: State): NumberCoordinates[] {
       }
     }
   }
-  // console.log('available moves', moves);
   return moves;
 }
