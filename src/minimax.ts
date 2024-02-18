@@ -4,10 +4,10 @@ import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
 // 3x3: 58
-// 3x4: 430
-// 3x5: 8533
+// 3x4: 457
+// 3x5: 8621
 // 3x6: 298_076
-// 4x4: 2494
+// 4x4: 2469
 // 5x5: infinite
 export function getBestMove(
   state: State,
@@ -35,9 +35,11 @@ export function getBestMove(
     const child: State = {
       ...state,
       currentPlayer: maximizing ? 'o' : 'x',
-      selections: {...state.selections},
+      selections: {
+        ...state.selections,
+        [numberCoordsToCoords(move)]: maximizing ? 'x' : 'o',
+      },
     };
-    child.selections[numberCoordsToCoords(move)] = maximizing ? 'x' : 'o';
     const terminalState = checkTerminal(child);
     if (terminalState.isTerminal) {
       if (terminalState.isWinner) {
@@ -56,10 +58,10 @@ export function getBestMove(
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
         ({bestScore} = nodeValue);
         bestMove = move;
-        if (maximizing && bestScore > newAlpha) {
-          newAlpha = bestScore;
-        } else if (!maximizing && bestScore < newBeta) {
-          newBeta = bestScore;
+        if (maximizing) {
+          newAlpha = Math.max(bestScore, newAlpha);
+        } else if (!maximizing) {
+          newBeta = Math.min(bestScore, newBeta);
         }
       }
     }
