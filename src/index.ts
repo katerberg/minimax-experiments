@@ -151,17 +151,20 @@ function calculate(): void {
   const result = document.getElementById('result-area');
   const time = new Date().getTime();
   if (result) {
+    result.textContent = 'Calculating...';
     const score = getCurrentScore();
-    const bestMove = getBestMove(state);
-    const terminal = `Terminal ${bestMove.bestScore} at ${bestMove.bestMove.x},${bestMove.bestMove.y}.`;
-    const calculated = `Calculated: ${new Date().getTime() - time} ms`;
-    if (score > 0) {
-      result.textContent = `Winning ${score}. ${terminal} ${calculated}`;
-    } else if (score < 0) {
-      result.textContent = `Losing ${score}. ${terminal} ${calculated}`;
-    } else {
-      result.textContent = `Tie ${score}. ${terminal} ${calculated}`;
-    }
+    setTimeout(() => {
+      const bestMove = getBestMove(state);
+      const terminal = `Terminal ${bestMove.bestScore} at ${bestMove.bestMove.x},${bestMove.bestMove.y}.`;
+      const calculated = `Calculated: ${new Date().getTime() - time} ms`;
+      if (score > 0) {
+        result.textContent = `Winning ${score}. ${terminal} ${calculated}`;
+      } else if (score < 0) {
+        result.textContent = `Losing ${score}. ${terminal} ${calculated}`;
+      } else {
+        result.textContent = `Tie ${score}. ${terminal} ${calculated}`;
+      }
+    }, 1);
   }
 }
 
