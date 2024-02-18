@@ -29,7 +29,7 @@ const state = {
   currentPlayer: 'x' as Choice,
   columns: 3,
   rows: 3,
-  maxDepth: 6,
+  maxDepth: 1200,
   selections: {} as {[key: Coordinate]: Choice},
 } as State;
 
@@ -155,7 +155,7 @@ function calculate(): void {
   const result = document.getElementById('result-area');
   const time = new Date().getTime();
   if (result) {
-    result.textContent = 'Calculating...';
+    result.textContent = `Calculating ${state.columns}x${state.rows} with depth ${state.maxDepth}...`;
     const score = getCurrentScore();
     setTimeout(() => {
       const bestMove = getBestMove(state);
