@@ -140,6 +140,10 @@ function rowChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
 }
 
 function depthChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
+  const result = document.getElementById('result-area');
+  if (result) {
+    result.textContent = `depth changed to ${ev.target.value}`;
+  }
   state.maxDepth = Number(ev.target.value);
 }
 

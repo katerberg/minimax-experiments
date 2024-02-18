@@ -3,9 +3,12 @@ import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
-// 3x3: 212
-// 3x4: 3953
-// 3x5: 39872
+// 3x3: 58
+// 3x4: 430
+// 3x5: 8533
+// 3x6: 298_076
+// 4x4: 2494
+// 5x5: infinite
 export function getBestMove(
   state: State,
   isMaximizing?: boolean,
