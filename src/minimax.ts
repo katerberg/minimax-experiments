@@ -3,10 +3,15 @@ import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
+// 3x3: 212
+// 3x4: 3953
+// 3x5: 39872
 export function getBestMove(
   state: State,
   isMaximizing?: boolean,
   depth = 0,
+  alpha = -1_000_000,
+  beta = 1_000_000,
 ): {bestScore: number; bestMove: NumberCoordinates} {
   const maximizing = isMaximizing !== undefined ? isMaximizing : state.currentPlayer === 'x';
   if (depth > state.maxDepth) {
@@ -18,6 +23,8 @@ export function getBestMove(
   const WORST_POSSIBLE_SCORE = maximizing ? -1_000_000 : 1_000_000;
   const DEPTH_MULTIPLIER = maximizing ? 1 : -1;
   let bestScore = WORST_POSSIBLE_SCORE;
+  let newAlpha = alpha;
+  let newBeta = beta;
 
   for (let i = 0; i < availableMoves.length; i++) {
     const move = availableMoves[i];
@@ -42,11 +49,19 @@ export function getBestMove(
         }
       }
     } else {
-      const nodeValue = getBestMove(child, !maximizing, depth + 1);
+      const nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
         ({bestScore} = nodeValue);
         bestMove = move;
+        if (maximizing && bestScore > newAlpha) {
+          newAlpha = bestScore;
+        } else if (!maximizing && bestScore < newBeta) {
+          newBeta = bestScore;
+        }
       }
+    }
+    if (newBeta <= newAlpha) {
+      break;
     }
   }
   return {bestScore, bestMove};
