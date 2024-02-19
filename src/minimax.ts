@@ -8,35 +8,51 @@ const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoo
 };
 
 // Depth infinite
-// 3x3: 16
-// 3x4: 26
-// 3x5: 62
-// 3x6: 49
-// 4x4: 737
-// 4x5: 986
-// 4x6: 826
-// 4x7: 2930
-// 4x8: 4970
-// 5x5: infinite
+// 3x3: 23
+// 4x4: 899
+// 4x7: 1350
+// 4x8: 1846
+// 4x10: 3123
+// 4x12: 4801
+// 4x20: 16_422
+// 5x5: OOM
 
 // Depth 10
-// 4x4: 637
-// 5x5: 16_576
+// 4x4: 778
+// 5x5: 19_273
+
+export function boardToTranspositionTableKey(state: State): string {
+  let key = '';
+  for (let y = 0; y < state.columns; y++) {
+    for (let x = 0; x < state.rows; x++) {
+      key += state.selections[`${x},${y}`] ?? '_';
+    }
+    key += ',';
+  }
+  key = key.slice(0, -1);
+  return key;
+}
 
 export function boardToTranspositionTableKeys(state: State): string[] {
   let key = '';
   let keyInverted = '';
+  let key180 = '';
+  const maxColumn = state.columns - 1;
+  const maxRow = state.rows - 1;
   for (let y = 0; y < state.columns; y++) {
     for (let x = 0; x < state.rows; x++) {
       key += state.selections[`${x},${y}`] ?? '_';
       keyInverted += state.selections[`${y},${x}`] ?? '_';
+      key180 += state.selections[`${maxColumn - y},${maxRow - x}`] ?? '_';
     }
     key += ',';
     keyInverted += ',';
+    key180 += ',';
   }
   key = key.slice(0, -1);
   keyInverted = keyInverted.slice(0, -1);
-  return [key, keyInverted];
+  key180 = key180.slice(0, -1);
+  return [key, keyInverted, key180];
 }
 
 export function getBestMove(
@@ -85,14 +101,15 @@ export function getBestMove(
       }
     } else {
       let nodeValue: {bestScore: number; bestMove: NumberCoordinates};
-      const transpositionTableKeys = boardToTranspositionTableKeys(child);
-      const transpositionTableKey = transpositionTableKeys.find((key) => transpositionTable[key]);
-      if (transpositionTableKey) {
+      const transpositionTableKey = boardToTranspositionTableKey(child);
+      if (transpositionTable[transpositionTableKey]) {
         nodeValue = transpositionTable[transpositionTableKey];
       } else {
         nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
-        transpositionTableKeys.forEach((key) => {
-          transpositionTable[key] = nodeValue;
+        boardToTranspositionTableKeys(child).forEach((key) => {
+          if (!transpositionTable[key]) {
+            transpositionTable[key] = nodeValue;
+          }
         });
       }
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {

@@ -83,10 +83,10 @@ describe('minimax', () => {
       const input = getFullBoardState();
       input.selections = {};
 
-      expect(boardToTranspositionTableKeys(input)).toEqual(['___,___,___', '___,___,___']);
+      expect(boardToTranspositionTableKeys(input)).toEqual(['___,___,___', '___,___,___', '___,___,___']);
     });
 
-    it('translates populated 4x3, including inverting', () => {
+    it('translates populated 4x3, including inverting and 180 degrees', () => {
       const input = getFullBoardState();
       input.columns = 3;
       input.rows = 4;
@@ -95,7 +95,7 @@ describe('minimax', () => {
         '0,1': 'o',
       };
 
-      expect(boardToTranspositionTableKeys(input)).toEqual(['_x__,o___,____', '_o__,x___,____']);
+      expect(boardToTranspositionTableKeys(input)).toEqual(['_x__,o___,____', '_o__,x___,____', '____,___x,__o_']);
     });
   });
 });
