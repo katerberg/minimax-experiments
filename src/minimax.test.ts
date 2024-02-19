@@ -1,4 +1,4 @@
-import {getBestMove} from './minimax';
+import {boardToTranspositionTableKeys, getBestMove} from './minimax';
 import {State} from './types';
 
 function getFullBoardState(): State {
@@ -75,6 +75,27 @@ describe('minimax', () => {
 
       expect(result.bestMove).toEqual({x: 1, y: 1});
       expect(result.bestScore).toEqual(0);
+    });
+  });
+
+  describe('boardToTranspositionTableKeys', () => {
+    it('translates empty 3x3', () => {
+      const input = getFullBoardState();
+      input.selections = {};
+
+      expect(boardToTranspositionTableKeys(input)).toEqual(['___,___,___', '___,___,___']);
+    });
+
+    it('translates populated 4x3, including inverting', () => {
+      const input = getFullBoardState();
+      input.columns = 3;
+      input.rows = 4;
+      input.selections = {
+        '1,0': 'x',
+        '0,1': 'o',
+      };
+
+      expect(boardToTranspositionTableKeys(input)).toEqual(['_x__,o___,____', '_o__,x___,____']);
     });
   });
 });

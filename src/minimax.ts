@@ -3,21 +3,42 @@ import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
+const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {
+  '___,___,___': {bestScore: 0, bestMove: {x: 0, y: 0}},
+};
+
 // Depth infinite
-// 3x3: 58
-// 3x4: 457
-// 3x5: 8621
-// 3x6: 298_076
-// 4x4: 2469
+// 3x3: 16
+// 3x4: 26
+// 3x5: 62
+// 3x6: 49
+// 4x4: 737
+// 4x5: 986
+// 4x6: 826
+// 4x7: 2930
+// 4x8: 4970
 // 5x5: infinite
 
 // Depth 10
-// 3x3: 53
-// 3x4: 415
-// 3x5: 4475
-// 3x6: 32_268
-// 4x4: 1592
-// 5x5: 64_134
+// 4x4: 637
+// 5x5: 16_576
+
+export function boardToTranspositionTableKeys(state: State): string[] {
+  let key = '';
+  let keyInverted = '';
+  for (let y = 0; y < state.columns; y++) {
+    for (let x = 0; x < state.rows; x++) {
+      key += state.selections[`${x},${y}`] ?? '_';
+      keyInverted += state.selections[`${y},${x}`] ?? '_';
+    }
+    key += ',';
+    keyInverted += ',';
+  }
+  key = key.slice(0, -1);
+  keyInverted = keyInverted.slice(0, -1);
+  return [key, keyInverted];
+}
+
 export function getBestMove(
   state: State,
   isMaximizing?: boolean,
@@ -63,7 +84,17 @@ export function getBestMove(
         }
       }
     } else {
-      const nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
+      let nodeValue: {bestScore: number; bestMove: NumberCoordinates};
+      const transpositionTableKeys = boardToTranspositionTableKeys(child);
+      const transpositionTableKey = transpositionTableKeys.find((key) => transpositionTable[key]);
+      if (transpositionTableKey) {
+        nodeValue = transpositionTable[transpositionTableKey];
+      } else {
+        nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
+        transpositionTableKeys.forEach((key) => {
+          transpositionTable[key] = nodeValue;
+        });
+      }
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
         ({bestScore} = nodeValue);
         bestMove = move;
