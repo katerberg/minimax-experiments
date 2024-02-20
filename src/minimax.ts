@@ -3,7 +3,7 @@ import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
-const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {
+let transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {
   '___,___,___': {bestScore: 0, bestMove: {x: 0, y: 0}},
 };
 
@@ -59,6 +59,9 @@ export function getBestMove(
   alpha = -1_000_000,
   beta = 1_000_000,
 ): {bestScore: number; bestMove: NumberCoordinates} {
+  if (depth === 0) {
+    transpositionTable = {};
+  }
   const maximizing = isMaximizing !== undefined ? isMaximizing : state.currentPlayer === 'x';
   if (depth > state.maxDepth) {
     return {bestScore: 0, bestMove: {x: 0, y: 0}};

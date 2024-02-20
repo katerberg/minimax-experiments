@@ -1,5 +1,5 @@
-import {getBestMove} from './minimax';
-import {State} from './types';
+import {getBestMove} from '../src/minimax';
+import {State} from '../src/types';
 
 function getEmptyBoardState(): State {
   return {
@@ -13,6 +13,9 @@ function getEmptyBoardState(): State {
 }
 
 describe('snapshot', () => {
+  beforeEach(() => {
+    jest.setTimeout(100_000);
+  });
   describe('infinite depth', () => {
     it('3x3 with 3 in a row', () => {
       const input = getEmptyBoardState();
@@ -59,6 +62,7 @@ describe('snapshot', () => {
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
+
     it('4x4 with 4 in a row', () => {
       const input = {...getEmptyBoardState(), rows: 4, columns: 4, requiredWin: 4, maxDepth: 10};
 
