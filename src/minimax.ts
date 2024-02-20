@@ -8,16 +8,16 @@ const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoo
 };
 
 // Depth infinite
-// 3x3: 23
-// 4x4: 758
-// 4x7: 1499
-// 4x12: 4482
-// 4x20: 16_422
+// 3x3: 31
+// 4x4: 1113
+// 4x7: 2107
+// 4x12: 8558
+// 4x20: 25_795
 // 5x5: OOM
 
 // Depth 10
-// 4x4: 646
-// 5x5: 17_360
+// 4x4: 732
+// 5x5: 22_407
 
 export function boardToTranspositionTableKey(state: State): string {
   let key = '';

@@ -1,14 +1,16 @@
 import {Choice, Moves, NumberCoordinates, State} from './types';
 
-function isColumnWin(selections: Moves, columns: number, rows: number): boolean {
+function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      if (
-        (selections[`${x},${y}`] === 'x' &&
-          selections[`${x},${y + 1}`] === 'x' &&
-          selections[`${x},${y + 2}`] === 'x') ||
-        (selections[`${x},${y}`] === 'o' && selections[`${x},${y + 1}`] === 'o' && selections[`${x},${y + 2}`] === 'o')
-      ) {
+      let isWinningColumn = selections[`${x},${y}`] !== undefined;
+      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+        if (selections[`${x},${y + winCheck}`] !== selections[`${x},${y}`]) {
+          isWinningColumn = false;
+          break;
+        }
+      }
+      if (isWinningColumn) {
         return true;
       }
     }
@@ -16,15 +18,17 @@ function isColumnWin(selections: Moves, columns: number, rows: number): boolean 
   return false;
 }
 
-function isRowWin(selections: Moves, columns: number, rows: number): boolean {
+function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows; y++) {
-      if (
-        (selections[`${x},${y}`] === 'x' &&
-          selections[`${x + 1},${y}`] === 'x' &&
-          selections[`${x + 2},${y}`] === 'x') ||
-        (selections[`${x},${y}`] === 'o' && selections[`${x + 1},${y}`] === 'o' && selections[`${x + 2},${y}`] === 'o')
-      ) {
+      let isWinningRow = selections[`${x},${y}`] !== undefined;
+      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+        if (selections[`${x + winCheck},${y}`] !== selections[`${x},${y}`]) {
+          isWinningRow = false;
+          break;
+        }
+      }
+      if (isWinningRow) {
         return true;
       }
     }
@@ -32,17 +36,17 @@ function isRowWin(selections: Moves, columns: number, rows: number): boolean {
   return false;
 }
 
-function isDiagonalWin(selections: Moves, columns: number, rows: number): boolean {
+function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      if (
-        (selections[`${x},${y}`] === 'x' &&
-          selections[`${x + 1},${y + 1}`] === 'x' &&
-          selections[`${x + 2},${y + 2}`] === 'x') ||
-        (selections[`${x},${y}`] === 'o' &&
-          selections[`${x + 1},${y + 1}`] === 'o' &&
-          selections[`${x + 2},${y + 2}`] === 'o')
-      ) {
+      let isWinningDiagonal = selections[`${x},${y}`] !== undefined;
+      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+        if (selections[`${x + winCheck},${y + winCheck}`] !== selections[`${x},${y}`]) {
+          isWinningDiagonal = false;
+          break;
+        }
+      }
+      if (isWinningDiagonal) {
         return true;
       }
     }
@@ -50,17 +54,17 @@ function isDiagonalWin(selections: Moves, columns: number, rows: number): boolea
   return false;
 }
 
-function isReverseDiagonalWin(selections: Moves, columns: number, rows: number): boolean {
+function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 2; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      if (
-        (selections[`${x},${y}`] === 'x' &&
-          selections[`${x - 1},${y + 1}`] === 'x' &&
-          selections[`${x - 2},${y + 2}`] === 'x') ||
-        (selections[`${x},${y}`] === 'o' &&
-          selections[`${x - 1},${y + 1}`] === 'o' &&
-          selections[`${x - 2},${y + 2}`] === 'o')
-      ) {
+      let isWinningDiagonal = selections[`${x},${y}`] !== undefined;
+      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+        if (selections[`${x - winCheck},${y + winCheck}`] !== selections[`${x},${y}`]) {
+          isWinningDiagonal = false;
+          break;
+        }
+      }
+      if (isWinningDiagonal) {
         return true;
       }
     }
@@ -68,12 +72,12 @@ function isReverseDiagonalWin(selections: Moves, columns: number, rows: number):
   return false;
 }
 
-export function isWin(selections: Moves, columns: number, rows: number): boolean {
+export function isWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   return (
-    isColumnWin(selections, columns, rows) ||
-    isRowWin(selections, columns, rows) ||
-    isDiagonalWin(selections, columns, rows) ||
-    isReverseDiagonalWin(selections, columns, rows)
+    isColumnWin(selections, columns, rows, winNumber) ||
+    isRowWin(selections, columns, rows, winNumber) ||
+    isDiagonalWin(selections, columns, rows, winNumber) ||
+    isReverseDiagonalWin(selections, columns, rows, winNumber)
   );
 }
 
@@ -87,7 +91,7 @@ export function checkTerminal(state: State): {
   isWinner: boolean;
   winner: Choice | null;
 } {
-  const isWinner = isWin(state.selections, state.columns, state.rows);
+  const isWinner = isWin(state.selections, state.columns, state.rows, 3);
   const isCatGame = isCat(state.selections, state.columns, state.rows);
   return {
     isTerminal: isWinner || isCatGame,
