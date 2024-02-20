@@ -2,12 +2,12 @@
 
 exports[`snapshot infinite depth 3x3 with 3 in a row 1`] = `21`;
 
-exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `1332`;
+exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `1319`;
 
-exports[`snapshot infinite depth 4x10 with 3 in a row 1`] = `10081`;
+exports[`snapshot infinite depth 4x10 with 3 in a row 1`] = `10237`;
 
-exports[`snapshot infinite depth 4x20 with 3 in a row 1`] = `34003`;
+exports[`snapshot infinite depth 4x20 with 3 in a row 1`] = `32008`;
 
-exports[`snapshot limited depth 4x4 with 3 in a row 1`] = `1118`;
+exports[`snapshot limited depth 4x4 with 3 in a row 1`] = `1110`;
 
-exports[`snapshot limited depth 4x4 with 4 in a row 1`] = `2554`;
+exports[`snapshot limited depth 4x4 with 4 in a row 1`] = `2551`;
