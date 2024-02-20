@@ -3,9 +3,7 @@ import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
 import {checkTerminal} from './winCalculation';
 
-let transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {
-  '___,___,___': {bestScore: 0, bestMove: {x: 0, y: 0}},
-};
+const transpositionTable: Map<string, {bestScore: number; bestMove: NumberCoordinates}> = new Map();
 
 // Depth infinite
 // 3x3: 31
@@ -60,7 +58,7 @@ export function getBestMove(
   beta = 1_000_000,
 ): {bestScore: number; bestMove: NumberCoordinates} {
   if (depth === 0) {
-    transpositionTable = {};
+    transpositionTable.clear();
   }
   const maximizing = isMaximizing !== undefined ? isMaximizing : state.currentPlayer === 'x';
   if (depth > state.maxDepth) {
@@ -102,13 +100,13 @@ export function getBestMove(
     } else {
       let nodeValue: {bestScore: number; bestMove: NumberCoordinates};
       const transpositionTableKey = boardToTranspositionTableKey(child);
-      if (transpositionTable[transpositionTableKey]) {
-        nodeValue = transpositionTable[transpositionTableKey];
+      if (transpositionTable.get(transpositionTableKey)) {
+        nodeValue = transpositionTable.get(transpositionTableKey) ?? {bestScore: 0, bestMove: {x: 0, y: 0}};
       } else {
         nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
         boardToTranspositionTableKeys(child).forEach((key) => {
-          if (!transpositionTable[key]) {
-            transpositionTable[key] = nodeValue;
+          if (!transpositionTable.get(key)) {
+            transpositionTable.set(key, nodeValue as {bestScore: number; bestMove: NumberCoordinates});
           }
         });
       }
