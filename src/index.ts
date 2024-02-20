@@ -29,6 +29,7 @@ const state = {
   currentPlayer: 'x' as Choice,
   columns: 3,
   rows: 3,
+  requiredWin: 3,
   maxDepth: 1200,
   selections: {} as {[key: Coordinate]: Choice},
 } as State;
@@ -147,6 +148,14 @@ function depthChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
   state.maxDepth = Number(ev.target.value);
 }
 
+function requiredWinChangeListener(ev: HTMLElementEvent<HTMLButtonElement>): void {
+  const result = document.getElementById('result-area');
+  if (result) {
+    result.textContent = `required win changed to ${ev.target.value}`;
+  }
+  state.requiredWin = Number(ev.target.value);
+}
+
 function getCurrentScore(): number {
   return getTotalScore(state.selections, state.columns, state.rows);
 }
@@ -175,13 +184,15 @@ function calculate(): void {
 function bindListeners(): void {
   const columnSelector = document.getElementById('column-selector');
   const rowSelector = document.getElementById('row-selector');
-  const depthSelector = document.getElementById('depth-selector');
   const calculateSelector = document.getElementById('calculate-button');
+  const depthSelector = document.getElementById('depth-selector');
+  const requiredWinSelector = document.getElementById('required-win-selector');
 
-  if (rowSelector && columnSelector && calculateSelector && depthSelector) {
+  if (rowSelector && columnSelector && calculateSelector && depthSelector && requiredWinSelector) {
     columnSelector.addEventListener('change', columnChangeListener as (ev: Event) => void);
     rowSelector.addEventListener('change', rowChangeListener as (ev: Event) => void);
     depthSelector.addEventListener('change', depthChangeListener as (ev: Event) => void);
+    requiredWinSelector.addEventListener('change', requiredWinChangeListener as (ev: Event) => void);
 
     calculateSelector.addEventListener('click', calculate);
   }

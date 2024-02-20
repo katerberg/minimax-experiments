@@ -9,4 +9,5 @@ export type State = {
   maxDepth: number;
   selections: Moves;
   currentPlayer: Choice;
+  requiredWin: number;
 };

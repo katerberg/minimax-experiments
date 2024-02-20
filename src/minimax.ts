@@ -19,6 +19,11 @@ const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoo
 // 4x4: 732
 // 5x5: 22_407
 
+// Win 4
+// 4x4 depth 10: 1758
+// 4x4: 6486
+// 4x10: 85_310
+
 export function boardToTranspositionTableKey(state: State): string {
   let key = '';
   for (let y = 0; y < state.columns; y++) {
