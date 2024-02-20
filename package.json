@@ -9,6 +9,7 @@
     "start:stable-ui": "NODE_ENV=production webpack-dev-server --config ./webpack.config.js --mode development",
     "start": "webpack-dev-server --config ./webpack.config.js --mode development",
     "test": "jest",
+    "test:performance": "jest --runInBand src/snapshot.test.ts",
     "lint": "npm run lint:base -- --fix",
     "lint:ci": "npm run lint:base",
     "lint:base": "eslint --ext js,ts src"

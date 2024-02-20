@@ -6,7 +6,7 @@ function getFullBoardState(): State {
     columns: 3,
     rows: 3,
     requiredWin: 3,
-    maxDepth: 200,
+    maxDepth: 1200,
     selections: {
       '0,0': 'x',
       '1,0': 'x',
