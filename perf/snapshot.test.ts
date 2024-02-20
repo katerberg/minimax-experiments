@@ -7,7 +7,7 @@ function getEmptyBoardState(): State {
     rows: 3,
     requiredWin: 3,
     maxDepth: 1200,
-    selections: {},
+    selections: new Map(),
     currentPlayer: 'x',
   };
 }

@@ -7,28 +7,11 @@ const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoo
   '___,___,___': {bestScore: 0, bestMove: {x: 0, y: 0}},
 };
 
-// Depth infinite
-// 3x3: 31
-// 4x4: 1113
-// 4x7: 2107
-// 4x12: 8558
-// 4x20: 25_795
-// 5x5: OOM
-
-// Depth 10
-// 4x4: 732
-// 5x5: 22_407
-
-// Win 4
-// 4x4 depth 10: 1758
-// 4x4: 6486
-// 4x10: 85_310
-
 export function boardToTranspositionTableKey(state: State): string {
   let key = '';
   for (let y = 0; y < state.columns; y++) {
     for (let x = 0; x < state.rows; x++) {
-      key += state.selections[`${x},${y}`] ?? '_';
+      key += state.selections.get(`${x},${y}`) ?? '_';
     }
     key += ',';
   }
@@ -41,8 +24,8 @@ export function boardToTranspositionTableKeys(state: State): string[] {
   let keyInverted = '';
   for (let y = 0; y < state.columns; y++) {
     for (let x = 0; x < state.rows; x++) {
-      key += state.selections[`${x},${y}`] ?? '_';
-      keyInverted += state.selections[`${y},${x}`] ?? '_';
+      key += state.selections.get(`${x},${y}`) ?? '_';
+      keyInverted += state.selections.get(`${y},${x}`) ?? '_';
     }
     key += ',';
     keyInverted += ',';
@@ -84,11 +67,9 @@ export function getBestMove(
     const child: State = {
       ...state,
       currentPlayer: maximizing ? 'o' : 'x',
-      selections: {
-        ...state.selections,
-        [numberCoordsToCoords(move)]: maximizing ? 'x' : 'o',
-      },
+      selections: new Map(state.selections),
     };
+    child.selections.set(numberCoordsToCoords(move), maximizing ? 'x' : 'o');
     const terminalState = checkTerminal(child);
     if (terminalState.isTerminal) {
       if (terminalState.isWinner) {

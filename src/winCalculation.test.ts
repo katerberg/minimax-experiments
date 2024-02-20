@@ -11,36 +11,40 @@ import {
   isCat,
 } from './winCalculation';
 
+function objectToMap(obj: {[key: Coordinate]: Choice}): Map<Coordinate, Choice> {
+  return new Map<Coordinate, Choice>(Object.entries(obj).map(([key, value]) => [key as Coordinate, value]));
+}
+
 describe('winCalculation', () => {
   describe('isWin', () => {
     it('should return false when there are not enough selections', () => {
-      expect(isWin({}, 3, 3, 3)).toBe(false);
+      expect(isWin(new Map(), 3, 3, 3)).toBe(false);
     });
 
     it('should return true when there are 3 in a row vertically', () => {
-      expect(isWin({'0,0': 'x', '0,1': 'x', '0,2': 'x'}, 3, 3, 3)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '0,1': 'x', '0,2': 'x'}), 3, 3, 3)).toBe(true);
     });
 
     it('should return true when there are 3 in a row horizontally', () => {
-      expect(isWin({'0,0': 'x', '1,0': 'x', '2,0': 'x'}, 3, 6, 3)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '2,0': 'x'}), 3, 6, 3)).toBe(true);
     });
 
     it('should return true when there are 3 in a row diagonally', () => {
-      expect(isWin({'1,1': 'x', '2,2': 'x', '3,3': 'x'}, 7, 8, 3)).toBe(true);
+      expect(isWin(objectToMap({'1,1': 'x', '2,2': 'x', '3,3': 'x'}), 7, 8, 3)).toBe(true);
     });
 
     it('should return true when there are 3 in a row reverse-diagonally', () => {
-      expect(isWin({'2,1': 'x', '1,2': 'x', '0,3': 'x'}, 5, 5, 3)).toBe(true);
+      expect(isWin(objectToMap({'2,1': 'x', '1,2': 'x', '0,3': 'x'}), 5, 5, 3)).toBe(true);
     });
   });
 
   describe('isCat', () => {
     it('should return false when there are not enough selections', () => {
-      expect(isCat({'0,0': 'x', '0,1': 'x', '1,0': 'x'}, 2, 2)).toBe(false);
+      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'x', '1,0': 'x'}), 2, 2)).toBe(false);
     });
 
     it('should return true when all spaces are filled', () => {
-      expect(isCat({'0,0': 'x', '0,1': 'o', '1,0': 'x', '2,2': 'o'}, 2, 2)).toBe(true);
+      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'o', '1,0': 'x', '2,2': 'o'}), 2, 2)).toBe(true);
     });
   });
 
@@ -54,11 +58,11 @@ describe('winCalculation', () => {
         '0,4': 'x',
       } as {[key: Coordinate]: Choice};
 
-      expect(getColumnScore(input, 0, 5)).toEqual(100000);
+      expect(getColumnScore(objectToMap(input), 0, 5)).toEqual(100000);
     });
 
     it('smoketest missing items', () => {
-      expect(getColumnScore({}, 4, 4)).toEqual(0);
+      expect(getColumnScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -74,7 +78,7 @@ describe('winCalculation', () => {
         '2,2': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalColumnScore(input, 3, 3)).toEqual(99989);
+      expect(getTotalColumnScore(objectToMap(input), 3, 3)).toEqual(99989);
     });
 
     it('gives negatives for Os', () => {
@@ -85,11 +89,11 @@ describe('winCalculation', () => {
         '1,2': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalColumnScore(input, 3, 3)).toEqual(-99999);
+      expect(getTotalColumnScore(objectToMap(input), 3, 3)).toEqual(-99999);
     });
 
     it('smoketest missing items', () => {
-      expect(getTotalColumnScore({}, 4, 4)).toEqual(0);
+      expect(getTotalColumnScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -103,11 +107,11 @@ describe('winCalculation', () => {
         '4,0': 'x',
       } as {[key: Coordinate]: Choice};
 
-      expect(getRowScore(input, 5, 0)).toEqual(100000);
+      expect(getRowScore(objectToMap(input), 5, 0)).toEqual(100000);
     });
 
     it('smoketest missing items', () => {
-      expect(getRowScore({}, 4, 4)).toEqual(0);
+      expect(getRowScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -123,7 +127,7 @@ describe('winCalculation', () => {
         '2,2': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalRowScore(input, 3, 3)).toEqual(99989);
+      expect(getTotalRowScore(objectToMap(input), 3, 3)).toEqual(99989);
     });
 
     it('gives negatives for Os', () => {
@@ -134,11 +138,11 @@ describe('winCalculation', () => {
         '2,1': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalRowScore(input, 3, 3)).toEqual(-99999);
+      expect(getTotalRowScore(objectToMap(input), 3, 3)).toEqual(-99999);
     });
 
     it('smoketest missing items', () => {
-      expect(getTotalRowScore({}, 4, 4)).toEqual(0);
+      expect(getTotalRowScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -163,11 +167,11 @@ describe('winCalculation', () => {
         '3,3': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalDiagonalScore(input, 4, 4)).toEqual(99987);
+      expect(getTotalDiagonalScore(objectToMap(input), 4, 4)).toEqual(99987);
     });
 
     it('smoketest missing items', () => {
-      expect(getTotalDiagonalScore({}, 4, 4)).toEqual(0);
+      expect(getTotalDiagonalScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -192,11 +196,11 @@ describe('winCalculation', () => {
         '3,3': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalReverseDiagonalScore(input, 4, 4)).toEqual(-99991);
+      expect(getTotalReverseDiagonalScore(objectToMap(input), 4, 4)).toEqual(-99991);
     });
 
     it('smoketest missing items', () => {
-      expect(getTotalReverseDiagonalScore({}, 4, 4)).toEqual(0);
+      expect(getTotalReverseDiagonalScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 
@@ -221,11 +225,11 @@ describe('winCalculation', () => {
         '3,3': 'o',
       } as {[key: Coordinate]: Choice};
 
-      expect(getTotalScore(input, 4, 4)).toEqual(99997);
+      expect(getTotalScore(objectToMap(input), 4, 4)).toEqual(99997);
     });
 
     it('smoketest missing items', () => {
-      expect(getTotalScore({}, 4, 4)).toEqual(0);
+      expect(getTotalScore(new Map(), 4, 4)).toEqual(0);
     });
   });
 });

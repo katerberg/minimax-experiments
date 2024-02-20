@@ -3,9 +3,9 @@ import {Choice, Moves, NumberCoordinates, State} from './types';
 function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      let isWinningColumn = selections[`${x},${y}`] !== undefined;
+      let isWinningColumn = selections.get(`${x},${y}`) !== undefined;
       for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections[`${x},${y + winCheck}`] !== selections[`${x},${y}`]) {
+        if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
           isWinningColumn = false;
           break;
         }
@@ -21,9 +21,9 @@ function isColumnWin(selections: Moves, columns: number, rows: number, winNumber
 function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows; y++) {
-      let isWinningRow = selections[`${x},${y}`] !== undefined;
+      let isWinningRow = selections.get(`${x},${y}`) !== undefined;
       for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections[`${x + winCheck},${y}`] !== selections[`${x},${y}`]) {
+        if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
           isWinningRow = false;
           break;
         }
@@ -39,9 +39,9 @@ function isRowWin(selections: Moves, columns: number, rows: number, winNumber: n
 function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns - 2; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      let isWinningDiagonal = selections[`${x},${y}`] !== undefined;
+      let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
       for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections[`${x + winCheck},${y + winCheck}`] !== selections[`${x},${y}`]) {
+        if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
           isWinningDiagonal = false;
           break;
         }
@@ -57,9 +57,9 @@ function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumb
 function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 2; x < columns; x++) {
     for (let y = 0; y < rows - 2; y++) {
-      let isWinningDiagonal = selections[`${x},${y}`] !== undefined;
+      let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
       for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections[`${x - winCheck},${y + winCheck}`] !== selections[`${x},${y}`]) {
+        if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
           isWinningDiagonal = false;
           break;
         }
@@ -82,7 +82,7 @@ export function isWin(selections: Moves, columns: number, rows: number, winNumbe
 }
 
 export function isCat(selections: Moves, columns: number, rows: number): boolean {
-  return Object.keys(selections).length === columns * rows;
+  return selections.size === columns * rows;
 }
 
 export function checkTerminal(state: State): {
@@ -104,9 +104,9 @@ export function checkTerminal(state: State): {
 export function getColumnScore(selections: Moves, column: number, rows: number): number {
   let score = 0;
   for (let y = 0; y < rows; y++) {
-    if (selections[`${column},${y}`] === 'x') {
-      if (selections[`${column},${y + 1}`] === 'x') {
-        if (selections[`${column},${y + 2}`] === 'x') {
+    if (selections.get(`${column},${y}`) === 'x') {
+      if (selections.get(`${column},${y + 1}`) === 'x') {
+        if (selections.get(`${column},${y + 2}`) === 'x') {
           score += 100000;
           y += 2;
         } else {
@@ -116,9 +116,9 @@ export function getColumnScore(selections: Moves, column: number, rows: number):
       } else {
         score += 1;
       }
-    } else if (selections[`${column},${y}`] === 'o') {
-      if (selections[`${column},${y + 1}`] === 'o') {
-        if (selections[`${column},${y + 2}`] === 'o') {
+    } else if (selections.get(`${column},${y}`) === 'o') {
+      if (selections.get(`${column},${y + 1}`) === 'o') {
+        if (selections.get(`${column},${y + 2}`) === 'o') {
           score -= 100000;
           y += 2;
         } else {
@@ -136,9 +136,9 @@ export function getColumnScore(selections: Moves, column: number, rows: number):
 export function getRowScore(selections: Moves, columns: number, row: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
-    if (selections[`${x},${row}`] === 'x') {
-      if (selections[`${x + 1},${row}`] === 'x') {
-        if (selections[`${x + 2},${row}`] === 'x') {
+    if (selections.get(`${x},${row}`) === 'x') {
+      if (selections.get(`${x + 1},${row}`) === 'x') {
+        if (selections.get(`${x + 2},${row}`) === 'x') {
           score += 100000;
           x += 2;
         } else {
@@ -148,9 +148,9 @@ export function getRowScore(selections: Moves, columns: number, row: number): nu
       } else {
         score += 1;
       }
-    } else if (selections[`${x},${row}`] === 'o') {
-      if (selections[`${x + 1},${row}`] === 'o') {
-        if (selections[`${x + 2},${row}`] === 'o') {
+    } else if (selections.get(`${x},${row}`) === 'o') {
+      if (selections.get(`${x + 1},${row}`) === 'o') {
+        if (selections.get(`${x + 2},${row}`) === 'o') {
           score -= 100000;
           x += 2;
         } else {
@@ -192,9 +192,9 @@ export function getDiagonalScore(
   let {x, y} = startingCoordinate;
   let score = 0;
   while (x < columns && y < rows) {
-    if (selections[`${x},${y}`] === 'x') {
-      if (selections[`${x + 1},${y + 1}`] === 'x') {
-        if (selections[`${x + 2},${y + 2}`] === 'x') {
+    if (selections.get(`${x},${y}`) === 'x') {
+      if (selections.get(`${x + 1},${y + 1}`) === 'x') {
+        if (selections.get(`${x + 2},${y + 2}`) === 'x') {
           score += 100000;
           x += 3;
           y += 3;
@@ -208,9 +208,9 @@ export function getDiagonalScore(
         x += 1;
         y += 1;
       }
-    } else if (selections[`${x},${y}`] === 'o') {
-      if (selections[`${x + 1},${y + 1}`] === 'o') {
-        if (selections[`${x + 2},${y + 2}`] === 'o') {
+    } else if (selections.get(`${x},${y}`) === 'o') {
+      if (selections.get(`${x + 1},${y + 1}`) === 'o') {
+        if (selections.get(`${x + 2},${y + 2}`) === 'o') {
           score -= 100000;
           x += 3;
           y += 3;
@@ -253,9 +253,9 @@ function getReverseDiagonalScore(
   let {x, y} = startingCoordinate;
   let score = 0;
   while (x >= 0 && y < rows) {
-    if (selections[`${x},${y}`] === 'x') {
-      if (selections[`${x - 1},${y + 1}`] === 'x') {
-        if (selections[`${x - 2},${y + 2}`] === 'x') {
+    if (selections.get(`${x},${y}`) === 'x') {
+      if (selections.get(`${x - 1},${y + 1}`) === 'x') {
+        if (selections.get(`${x - 2},${y + 2}`) === 'x') {
           score += 100000;
           x -= 3;
           y += 3;
@@ -269,9 +269,9 @@ function getReverseDiagonalScore(
         x -= 1;
         y += 1;
       }
-    } else if (selections[`${x},${y}`] === 'o') {
-      if (selections[`${x - 1},${y + 1}`] === 'o') {
-        if (selections[`${x - 2},${y + 2}`] === 'o') {
+    } else if (selections.get(`${x},${y}`) === 'o') {
+      if (selections.get(`${x - 1},${y + 1}`) === 'o') {
+        if (selections.get(`${x - 2},${y + 2}`) === 'o') {
           score -= 100000;
           x -= 3;
           y += 3;

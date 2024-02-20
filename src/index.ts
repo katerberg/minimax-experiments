@@ -31,7 +31,7 @@ const state = {
   rows: 3,
   requiredWin: 3,
   maxDepth: 1200,
-  selections: {} as {[key: Coordinate]: Choice},
+  selections: new Map<Coordinate, Choice>(),
 } as State;
 
 function initCanvasSize(canvas: HTMLCanvasElement): void {
@@ -102,7 +102,7 @@ function redrawBoard(ctx: CanvasRenderingContext2D): void {
 function redrawSelections(): void {
   (Object.keys(state.selections) as Coordinate[]).forEach((key) => {
     const {x, y} = coordsToNumberCoords(key);
-    if (state.selections[key] === 'x') {
+    if (state.selections.get(key) === 'x') {
       drawX(x, y);
     } else {
       drawO(x, y);
@@ -124,7 +124,7 @@ function updateSelections(columns: number, rows: number): void {
   (Object.keys(state.selections) as Coordinate[]).forEach((key) => {
     const {x, y} = coordsToNumberCoords(key);
     if (x >= columns || y >= rows) {
-      delete state.selections[key];
+      state.selections.delete(key);
     }
   });
 }
@@ -210,16 +210,16 @@ function getCellCoordinatesFromClick(event: MouseEvent): NumberCoordinates {
 
 function handleClick(event: MouseEvent): void {
   const {x, y} = getCellCoordinatesFromClick(event);
-  switch (state.selections[`${x},${y}`]) {
+  switch (state.selections.get(`${x},${y}`)) {
     case 'x':
-      state.selections[`${x},${y}`] = 'o';
+      state.selections.set(`${x},${y}`, 'o');
       break;
     case 'o':
-      delete state.selections[`${x},${y}`];
+      state.selections.delete(`${x},${y}`);
       break;
     case undefined:
     default:
-      state.selections[`${x},${y}`] = 'x';
+      state.selections.set(`${x},${y}`, 'x');
       break;
   }
   redraw();
