@@ -90,7 +90,7 @@ function redrawBoard(ctx: CanvasRenderingContext2D): void {
   const cellWidth = gameWidth / state.columns;
   const cellHeight = gameHeight / state.rows;
 
-  ctx.fillStyle = 'rgb(0 0 0)';
+  ctx.fillStyle = 'rgb(10 200 110)';
   for (let col = 1; col < state.columns; col++) {
     ctx.fillRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
   }
