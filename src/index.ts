@@ -100,9 +100,9 @@ function redrawBoard(ctx: CanvasRenderingContext2D): void {
 }
 
 function redrawSelections(): void {
-  (Object.keys(state.selections) as Coordinate[]).forEach((key) => {
-    const {x, y} = coordsToNumberCoords(key);
-    if (state.selections.get(key) === 'x') {
+  (state.selections).forEach((key, value) => {
+    const {x, y} = coordsToNumberCoords(value);
+    if (key=== 'x') {
       drawX(x, y);
     } else {
       drawO(x, y);
