@@ -1,7 +1,7 @@
 import {getAvailableMoves} from './board';
 import {numberCoordsToCoords} from './coordinatesHelper';
 import {NumberCoordinates, State} from './types';
-import {checkTerminal} from './winCalculation';
+import {checkTerminal, getTotalScore} from './winCalculation';
 
 const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {
   '___,___,___': {bestScore: 0, bestMove: {x: 0, y: 0}},
@@ -49,11 +49,11 @@ export function getBestMove(
     }
   }
   const maximizing = isMaximizing !== undefined ? isMaximizing : state.currentPlayer === 'x';
-  if (depth > state.maxDepth) {
-    return {bestScore: 0, bestMove: {x: 0, y: 0}};
-  }
   const availableMoves = getAvailableMoves(state);
   let [bestMove] = availableMoves;
+  if (depth > state.maxDepth) {
+    return {bestScore: getTotalScore(state.selections, state.columns, state.rows), bestMove};
+  }
   //Initialize best to the worst possible value and have a default move
   const WORST_POSSIBLE_SCORE = maximizing ? -1_000_000 : 1_000_000;
   const DEPTH_MULTIPLIER = maximizing ? 1 : -1;
